@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz App with Leaderboard</title>
+    <title>Quiz App</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f4f9;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
             display: flex;
@@ -15,102 +15,346 @@
             align-items: center;
             height: 100vh;
         }
+
         .quiz-container {
-            background: #ffffff;
+            background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 90%;
-            max-width: 600px;
+            width: 400px;
             text-align: center;
         }
-        .question {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .options {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .options li {
-            margin: 10px 0;
-            padding: 10px 15px;
-            background: #f0f0f5;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .options li:hover {
-            background: #e0e0f0;
-        }
-        .options li.correct {
-            background: #c8e6c9;
-        }
-        .options li.wrong {
-            background: #ffcdd2;
-        }
-        .timer {
-            font-size: 18px;
-            color: #d32f2f;
-            margin-bottom: 20px;
-        }
-        #next-btn {
-            display: none;
-            padding: 10px 20px;
-            background: #1976d2;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        #next-btn:hover {
-            background: #1565c0;
-        }
-        .result {
+
+        h1 {
             font-size: 24px;
             color: #333;
-            display: none;
         }
+
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        #options {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #options li {
+            cursor: pointer;
+            padding: 12px;
+            margin: 8px 0;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        #options li:hover {
+            background-color: #e0e0e0;
+        }
+
+        .correct {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .wrong {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #next-btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #next-btn:hover {
+            background-color: #0056b3;
+        }
+
         .leaderboard {
             margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #f9f9f9;
         }
+
         .leaderboard h2 {
             font-size: 20px;
-            margin: 0;
+            color: #333;
         }
+
         .leaderboard ul {
-            list-style: none;
             padding: 0;
-            margin: 10px 0;
+            list-style-type: none;
         }
+
         .leaderboard li {
-            padding: 5px 10px;
-            background: #f0f0f5;
-            margin-bottom: 5px;
-            border-radius: 3px;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            margin: 4px 0;
+        }
+
+        .leaderboard li:nth-child(odd) {
+            background-color: #e9e9e9;
+        }
+
+        #timer {
+            font-size: 18px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="quiz-container">
-        <div class="timer" id="timer">Time Left: 10s</div>
-        <div class="question" id="question"></div>
-        <ul class="options" id="options"></ul>
-        <button id="next-btn">Next</button>
-        <div class="result" id="result"></div>
-        <div class="leaderboard" id="leaderboard">
+        <h1>Quiz</h1>
+        <p id="question"></p>
+        <ul id="options"></ul>
+        <p id="timer"></p>
+        <button id="next-btn" style="display: none;">Next Question</button>
+        <div class="leaderboard">
             <h2>Leaderboard</h2>
             <ul id="leaderboard-list"></ul>
         </div>
     </div>
 
-    <script src="quiz.js"></script>
+    <script>
+        const questions = [
+            {
+                        question: "Who founded the Brahmo Samaj in 1828?",
+        options: ["Swami Vivekananda", "Raja Ram Mohan Roy", "Dayananda Saraswati", "Ishwar Chandra Vidyasagar"],
+        answer: "Raja Ram Mohan Roy"
+    },
+    {
+        question: "Which city will host the 2028 Summer Olympics?",
+        options: ["Paris", "Tokyo", "Los Angeles", "London"],
+        answer: "Los Angeles"
+    },
+    {
+        question: "Which young revolutionary threw a bomb in the Central Legislative Assembly in 1929?",
+        options: ["Chandrashekhar Azad", "Bhagat Singh", "Rajguru", "Sukhdev"],
+        answer: "Bhagat Singh"
+    },
+    {
+        question: "What is the largest desert in the world?",
+        options: ["Sahara", "Gobi", "Atacama", "Thar"],
+        answer: "Sahara"
+    },
+    {
+        question: "Who is called the 'Father of the Indian Renaissance'?",
+        options: ["Raja Ram Mohan Roy", "Mahatma Gandhi", "Rabindranath Tagore", "Ishwar Chandra Vidyasagar"],
+        answer: "Raja Ram Mohan Roy"
+    },
+    {
+        question: "Who is the current captain of the Indian men’s cricket team in ODIs?",
+        options: ["Virat Kohli", "MS Dhoni", "KL Rahul", "Rohit Sharma"],
+        answer: "Rohit Sharma"
+    },
+    {
+        question: "Which leader established the Indian National Army (INA)?",
+        options: ["Jawaharlal Nehru", "Subhas Chandra Bose", "Bhagat Singh", "Bal Gangadhar Tilak"],
+        answer: "Subhas Chandra Bose"
+    },
+    {
+        question: "Which country won the FIFA World Cup 2022?",
+        options: ["France", "Argentina", "Brazil", "Germany"],
+        answer: "Argentina"
+    },
+    {
+        question: "Who wrote the book Anandamath, which inspired the national song 'Vande Mataram'?",
+        options: ["Rabindranath Tagore", "Bankim Chandra Chatterjee", "Ishwar Chandra Vidyasagar", "Raja Ram Mohan Roy"],
+        answer: "Bankim Chandra Chatterjee"
+    },
+    {
+        question: "Which Indian won the gold medal in javelin at the 2024 Asian Games?",
+        options: ["Hima Das", "Neeraj Chopra", "Arshad Nadeem", "Annu Rani"],
+        answer: "Neeraj Chopra"
+    },
+    {
+        question: "What was the movement launched by Gandhi after the Chauri Chaura incident?",
+        options: ["Civil Disobedience", "Quit India", "Non-Cooperation", "Salt Satyagraha"],
+        answer: "Non-Cooperation"
+    },
+    {
+        question: "Who gave the title 'Mahatma' to Gandhi?",
+        options: ["Rabindranath Tagore", "Jawaharlal Nehru", "Bal Gangadhar Tilak", "Subhas Chandra Bose"],
+        answer: "Rabindranath Tagore"
+    },
+    {
+        question: "What is the currency of Japan?",
+        options: ["Dollar", "Yen", "Won", "Yuan"],
+        answer: "Yen"
+    },
+    {
+        question: "Which leader is associated with the Kakori Conspiracy?",
+        options: ["Chandrashekhar Azad", "Ashfaqulla Khan", "Bhagat Singh", "Rajguru"],
+        answer: "Ashfaqulla Khan"
+    },
+    {
+        question: "Who is the youngest Indian cricketer to score a double century in ODIs?",
+        options: ["Shubman Gill", "Ishan Kishan", "Rishabh Pant", "Yashasvi Jaiswal"],
+        answer: "Ishan Kishan"
+    },
+    {
+        question: "What is the slogan of the Swadeshi Movement?",
+        options: ["Vande Mataram", "Quit India", "Swaraj is my birthright", "Jai Hind"],
+        answer: "Vande Mataram"
+    },
+    {
+        question: "Who founded the Arya Samaj in 1875?",
+        options: ["Swami Dayananda Saraswati", "Swami Vivekananda", "Sri Aurobindo", "Ishwar Chandra Vidyasagar"],
+        answer: "Swami Dayananda Saraswati"
+    },
+    {
+        question: "What is the nickname of the planet Mars?",
+        options: ["Blue Planet", "Red Planet", "Green Planet", "Yellow Planet"],
+        answer: "Red Planet"
+    },
+    {
+        question: "Who started the newspaper Indian Opinion in South Africa?",
+        options: ["Jawaharlal Nehru", "Mahatma Gandhi", "Subhas Chandra Bose", "Rabindranath Tagore"],
+        answer: "Mahatma Gandhi"
+    },
+    {
+        question: "What is the official motto of the Olympic Games?",
+        options: ["Faster, Higher, Stronger – Together", "One World, One Dream", "Inspire a Generation", "Breaking Barriers"],
+        answer: "Faster, Higher, Stronger – Together"
+    },
+    {
+        question: "What is the capital of Australia?",
+        options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
+        answer: "Canberra"
+    }
+        ];
+
+        let currentQuestionIndex = 0;
+        let timer = 20;  // 20 seconds timer for each question
+        let score = 0;
+        let totalTime = 0;
+        let waitingForNext = false;
+        const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+
+        function showQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const questionEl = document.getElementById("question");
+                const optionsEl = document.getElementById("options");
+                const timerEl = document.getElementById("timer");
+                const nextBtn = document.getElementById("next-btn");
+
+                questionEl.textContent = questions[currentQuestionIndex].question;
+                optionsEl.innerHTML = "";
+                timer = 20;  // Reset timer to 20 seconds
+
+                questions[currentQuestionIndex].options.forEach(option => {
+                    const li = document.createElement("li");
+                    li.textContent = option;
+                    li.onclick = () => selectAnswer(li);
+                    optionsEl.appendChild(li);
+                });
+
+                nextBtn.style.display = "none";  // Hide next button initially
+                timerEl.textContent = `Time Left: ${timer}s`;
+
+                const interval = setInterval(() => {
+                    if (waitingForNext) {
+                        clearInterval(interval);
+                    }
+                    timer--;
+                    timerEl.textContent = `Time Left: ${timer}s`;
+                    totalTime++;
+                    if (timer === 0) {
+                        clearInterval(interval);
+                        nextQuestion(); // Skip to next question automatically if time runs out
+                    }
+                }, 1000);
+            } else {
+                // End the quiz and show results
+                const name = prompt("Enter your name for the leaderboard:");
+                leaderboard.push({ name, score, time: totalTime });
+                localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+                updateLeaderboard();
+
+                document.querySelector(".quiz-container").innerHTML = `
+                    <h1>Quiz Completed!</h1>
+                    <p>Your Score: ${score}/${questions.length}</p>
+                    <p>Total Time: ${totalTime}s</p>
+                    <div class="leaderboard">
+                        <h2>Leaderboard</h2>
+                        <ul id="leaderboard-list"></ul>
+                    </div>
+                `;
+                updateLeaderboard();
+            }
+        }
+
+        function selectAnswer(selectedOption) {
+            // Disable all options after an answer is selected
+            const options = document.querySelectorAll("#options li");
+            options.forEach(option => {
+                option.onclick = null; // Disable further clicks
+            });
+
+            const correctAnswer = questions[currentQuestionIndex].answer;
+            if (selectedOption.textContent === correctAnswer) {
+                selectedOption.classList.add("correct");
+                score++;
+            } else {
+                selectedOption.classList.add("wrong");
+            }
+            
+            waitingForNext = true;  // Enable waiting for the next question
+            document.getElementById("next-btn").style.display = "block"; // Show next button
+            setTimeout(() => {
+                if (waitingForNext) {
+                    nextQuestion();  // Proceed to next question after 5 seconds
+                }
+            }, 5000);  // Wait for 5 seconds before automatically moving to next question
+        }
+
+        function nextQuestion() {
+            waitingForNext = false;  // Reset waiting state
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                // End the quiz and show results
+                const name = prompt("Enter your name for the leaderboard:");
+                leaderboard.push({ name, score, time: totalTime });
+                localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+                updateLeaderboard();
+
+                document.querySelector(".quiz-container").innerHTML = `
+                    <h1>Quiz Completed!</h1>
+                    <p>Your Score: ${score}/${questions.length}</p>
+                    <p>Total Time: ${totalTime}s</p>
+                    <div class="leaderboard">
+                        <h2>Leaderboard</h2>
+                        <ul id="leaderboard-list"></ul>
+                    </div>
+                `;
+                updateLeaderboard();
+            }
+        }
+
+        function updateLeaderboard() {
+            const leaderboardList = document.getElementById("leaderboard-list");
+            leaderboardList.innerHTML = "";
+
+            leaderboard.sort((a, b) => a.time - b.time);
+            leaderboard.forEach(entry => {
+                const li = document.createElement("li");
+                li.textContent = `${entry.name}: ${entry.score} points in ${entry.time}s`;
+                leaderboardList.appendChild(li);
+            });
+        }
+
+        document.getElementById("next-btn").onclick = nextQuestion;
+
+        showQuestion();
+    </script>
 </body>
 </html>
